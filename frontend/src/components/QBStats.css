@@ -1,0 +1,41 @@
+/* QBStats.css */
+.qb-stats-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.qb-stats-table {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.qb-stats-table th,
+.qb-stats-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.qb-stats-table th {
+  background-color: #4CAF50;
+  color: white;
+  text-transform: uppercase;
+}
+
+.qb-stats-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.qb-stats-table tr:hover {
+  background-color: #ddd;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
