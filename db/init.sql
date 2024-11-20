@@ -30,50 +30,46 @@ CREATE TABLE IF NOT EXISTS qb_weekly_stats (
 CREATE INDEX idx_qb_season_week ON qb_weekly_stats (season, week);
 CREATE INDEX idx_qb_player_id ON qb_weekly_stats (player_id);
 
--- Stored procedure to generate QB performance report
-CREATE OR REPLACE FUNCTION generate_qb_performance_report(player_id VARCHAR, season INT)
-RETURNS TABLE (
-    player_name VARCHAR,
-    total_passing_yards INT,
-    total_touchdowns INT,
-    total_interceptions INT,
-    total_sacks INT
-) AS $$
+CREATE OR REPLACE FUNCTION get_average_passing_yards()
+RETURNS TABLE(week INT, average_passing_yards NUMERIC) AS $$
 BEGIN
     RETURN QUERY
-    SELECT q.name AS player_name,
-           SUM(qw.passing_yards) AS total_passing_yards,
-           SUM(qw.passing_tds) AS total_touchdowns,
-           SUM(qw.interceptions) AS total_interceptions,
-           SUM(qw.sacks) AS total_sacks
-    FROM qb_weekly_stats qw
-    JOIN quarterback q ON qw.player_id = q.id
-    WHERE qw.player_id = player_id AND qw.season = season
-    GROUP BY player_name;
+    SELECT qws.week, AVG(qws.passing_yards) AS average_passing_yards
+    FROM qb_weekly_stats qws
+    WHERE qws.passing_yards IS NOT NULL
+    GROUP BY qws.week
+    ORDER BY qws.week DESC
+    LIMIT 4;
 END;
 $$ LANGUAGE plpgsql;
 
--- Stored procedure to analyze weekly trends for a QB
-CREATE OR REPLACE FUNCTION qb_weekly_trends(player_id VARCHAR, season INT)
-RETURNS TABLE (
-    week INT,
-    passing_yards INT,
-    passing_tds INT,
-    interceptions INT
-) AS $$
+
+CREATE OR REPLACE FUNCTION get_top_performers(season INT, stat TEXT)
+RETURNS TABLE(player_name TEXT, team TEXT, stat_value NUMERIC) AS $$
 BEGIN
-    RETURN QUERY
-    SELECT week, passing_yards, passing_tds, interceptions
-    FROM qb_weekly_stats
-    WHERE player_id = player_id AND season = season
-    ORDER BY week;
+    RETURN QUERY EXECUTE format('
+        SELECT qb.name, qb.team, qws.%I
+        FROM quarterback qb
+        JOIN qb_weekly_stats qws ON qb.id = qws.player_id
+        WHERE qws.season = $1
+        ORDER BY qws.%I DESC
+        LIMIT 10', stat, stat) USING season;
 END;
 $$ LANGUAGE plpgsql;
 
--- Stored procedure to clean invalid data
+CREATE OR REPLACE FUNCTION get_moving_avg_stat(player_id TEXT, stat TEXT)
+RETURNS TABLE(week INT, moving_avg NUMERIC) AS $$
+BEGIN
+    RETURN QUERY EXECUTE format('
+        SELECT week, AVG(%I) OVER (ORDER BY week ROWS BETWEEN 4 PRECEDING AND CURRENT ROW)
+        FROM qb_weekly_stats
+        WHERE player_id = $1', stat) USING player_id;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION clean_qb_stats()
 RETURNS VOID AS $$
 BEGIN
-    DELETE FROM qb_weekly_stats WHERE passing_yards < 0 OR passing_tds < 0;
+    DELETE FROM qb_weekly_stats WHERE passing_yards < 50 OR attempts < 10;
 END;
 $$ LANGUAGE plpgsql;

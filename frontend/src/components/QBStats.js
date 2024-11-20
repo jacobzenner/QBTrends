@@ -1,5 +1,5 @@
-// QBStats.js
 import React, { useEffect, useState } from 'react';
+import TrendsChart from './TrendsChart';
 import './QBStats.css';
 
 const QBStats = () => {
@@ -14,33 +14,7 @@ const QBStats = () => {
 
   return (
     <div className="qb-stats-container">
-      <h2 className="qb-stats-title">Quarterback Statistics</h2>
-      <table className="qb-stats-table">
-        <thead>
-          <tr>
-            <th>Player Name</th>
-            <th>Team</th>
-            <th>Season</th>
-            <th>Week</th>
-            <th>Passing Yards</th>
-            <th>Touchdowns</th>
-            <th>Interceptions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {qbData.map((qb, index) => (
-            <tr key={index}>
-              <td>{qb.player_name}</td>
-              <td>{qb.team}</td>
-              <td>{qb.season}</td>
-              <td>{qb.week}</td>
-              <td>{qb.passing_yards}</td>
-              <td>{qb.touchdowns}</td>
-              <td>{qb.interceptions}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {qbData.length > 0 && <TrendsChart playerId={qbData[0].player_id} />}
     </div>
   );
 };

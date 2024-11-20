@@ -1,8 +1,7 @@
-// app.js
-
 const express = require('express');
-const db = require('./db');  // Import the db.js module
-const qbRoutes = require('./routes/qbRoutes'); // Import qbRoutes
+const db = require('./db');
+const qbRoutes = require('./routes/qbRoutes');
+const trendRoutes = require('./routes/trendRoutes'); // Import trend routes
 const cors = require('cors');
 
 const app = express();
@@ -11,22 +10,21 @@ const port = 4000;
 
 app.use(express.json());
 
-// Test the database connection when the app starts
+// Test the database connection
 db.testConnection().then(() => {
   console.log('Connected to the database successfully');
 }).catch(err => {
   console.error('Failed to connect to the database:', err);
 });
 
-// Use the qbRoutes for quarterback-related endpoints
-app.use('/api', qbRoutes); // This should mount the routes at /api
+// Use the qbRoutes and trendRoutes
+app.use('/api', qbRoutes);
+app.use('/api', trendRoutes); // Register trend routes
 
-// Root route
 app.get('/', (req, res) => {
   res.send('Welcome to the Quarterback Stats API');
 });
 
-// Start the server
 app.listen(port, () => {
   console.log(`Backend server running on port ${port}`);
 });
