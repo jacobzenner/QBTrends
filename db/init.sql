@@ -43,29 +43,74 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
-CREATE OR REPLACE FUNCTION get_top_performers(season INT, stat TEXT)
-RETURNS TABLE(player_name TEXT, team TEXT, stat_value NUMERIC) AS $$
+-- Create function to get player with highest average passing EPA
+CREATE OR REPLACE FUNCTION get_highest_passing_epa()
+RETURNS TABLE(player_id VARCHAR, player_name VARCHAR, team VARCHAR, passing_epa FLOAT, passing_yards INTEGER, touchdowns INTEGER, interceptions INTEGER) AS $$
 BEGIN
-    RETURN QUERY EXECUTE format('
-        SELECT qb.name, qb.team, qws.%I
-        FROM quarterback qb
-        JOIN qb_weekly_stats qws ON qb.id = qws.player_id
-        WHERE qws.season = $1
-        ORDER BY qws.%I DESC
-        LIMIT 10', stat, stat) USING season;
+    RETURN QUERY
+    SELECT qws.player_id, qb.name AS player_name, qb.team, SUM(qws.passing_epa) AS passing_epa, 
+           SUM(qws.passing_yards)::INTEGER AS passing_yards, SUM(qws.passing_tds)::INTEGER AS touchdowns, 
+           SUM(qws.interceptions)::INTEGER AS interceptions
+    FROM qb_weekly_stats qws
+    JOIN quarterback qb ON qws.player_id = qb.id
+    GROUP BY qws.player_id, qb.name, qb.team
+    ORDER BY passing_epa DESC
+    LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_moving_avg_stat(player_id TEXT, stat TEXT)
-RETURNS TABLE(week INT, moving_avg NUMERIC) AS $$
+-- Create function to get player with highest total passing yards
+CREATE OR REPLACE FUNCTION get_highest_passing_yards()
+RETURNS TABLE(player_id VARCHAR, player_name VARCHAR, team VARCHAR, passing_yards INTEGER, touchdowns INTEGER, interceptions INTEGER) AS $$
 BEGIN
-    RETURN QUERY EXECUTE format('
-        SELECT week, AVG(%I) OVER (ORDER BY week ROWS BETWEEN 4 PRECEDING AND CURRENT ROW)
-        FROM qb_weekly_stats
-        WHERE player_id = $1', stat) USING player_id;
+    RETURN QUERY
+    SELECT qws.player_id, qb.name AS player_name, qb.team, SUM(qws.passing_yards)::INTEGER AS passing_yards, 
+           SUM(qws.passing_tds)::INTEGER AS touchdowns, SUM(qws.interceptions)::INTEGER AS interceptions
+    FROM qb_weekly_stats qws
+    JOIN quarterback qb ON qws.player_id = qb.id
+    GROUP BY qws.player_id, qb.name, qb.team
+    ORDER BY passing_yards DESC
+    LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Create function to get player with highest total passing TDs
+CREATE OR REPLACE FUNCTION get_highest_passing_tds()
+RETURNS TABLE(player_id VARCHAR, player_name VARCHAR, team VARCHAR, touchdowns INTEGER, passing_yards INTEGER, interceptions INTEGER) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT qws.player_id, qb.name AS player_name, qb.team, SUM(qws.passing_tds)::INTEGER AS touchdowns, 
+           SUM(qws.passing_yards)::INTEGER AS passing_yards, SUM(qws.interceptions)::INTEGER AS interceptions
+    FROM qb_weekly_stats qws
+    JOIN quarterback qb ON qws.player_id = qb.id
+    GROUP BY qws.player_id, qb.name, qb.team
+    ORDER BY touchdowns DESC
+    LIMIT 1;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+-- Create function to get average TDs and INTs over the last 4 weeks
+CREATE OR REPLACE FUNCTION get_average_tds_ints()
+RETURNS TABLE(week INTEGER, average_tds DOUBLE PRECISION, average_ints DOUBLE PRECISION) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT qws.week, 
+           AVG(qws.passing_tds)::DOUBLE PRECISION AS average_tds, 
+           AVG(qws.interceptions)::DOUBLE PRECISION AS average_ints
+    FROM qb_weekly_stats qws
+    WHERE qws.week IN (
+        SELECT DISTINCT qws_inner.week
+        FROM qb_weekly_stats qws_inner
+        ORDER BY qws_inner.week DESC
+        LIMIT 4
+    )
+    GROUP BY qws.week
+    ORDER BY qws.week ASC;
+END;
+$$ LANGUAGE plpgsql;
+
 
 CREATE OR REPLACE FUNCTION clean_qb_stats()
 RETURNS VOID AS $$

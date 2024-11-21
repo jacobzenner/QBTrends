@@ -15,25 +15,46 @@ router.get('/qb-stats/average-passing-yards', async (req, res) => {
   }
 });
 
-
-router.get('/qb-stats/top-performers/:season/:stat', async (req, res) => {
+// Endpoint for fetching the player with the highest total passing yards
+router.get('/qb-stats/highest-passing-yards', async (req, res) => {
   try {
-    const { season, stat } = req.params;
-    const result = await db.query('SELECT * FROM get_top_performers($1, $2)', [season, stat]);
-    res.json(result.rows);
+    const result = await db.query('SELECT * FROM get_highest_passing_yards()');
+    res.json(result.rows[0]);
   } catch (err) {
-    console.error('Error fetching top performers:', err.stack);
+    console.error('Error fetching highest passing yards:', err.stack);
     res.status(500).send('Server error');
   }
 });
 
-router.get('/qb-stats/moving-avg/:player_id/:stat', async (req, res) => {
+// Endpoint for fetching the player with the highest passing EPA
+router.get('/qb-stats/highest-passing-epa', async (req, res) => {
   try {
-    const { player_id, stat } = req.params;
-    const result = await db.query('SELECT * FROM get_moving_avg_stat($1, $2)', [player_id, stat]);
+    const result = await db.query('SELECT * FROM get_highest_passing_epa()');
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching highest passing EPA:', err.stack);
+    res.status(500).send('Server error');
+  }
+});
+
+// Endpoint for fetching the player with the highest total passing TDs
+router.get('/qb-stats/highest-passing-tds', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM get_highest_passing_tds()');
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching highest passing TDs:', err.stack);
+    res.status(500).send('Server error');
+  }
+});
+
+// Endpoint for fetching average TDs and INTs over the last 4 weeks
+router.get('/qb-stats/average-tds-ints', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM get_average_tds_ints()');
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching moving average stats:', err.stack);
+    console.error('Error fetching average TDs and INTs:', err.stack);
     res.status(500).send('Server error');
   }
 });
