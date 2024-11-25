@@ -29,7 +29,7 @@ This project is a web application designed to track and visualize the performanc
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/jacobzenner/QBStats.git
-   cd nfl-qb-performance-tracker
+   cd QBStats
    ```
 2. **Run with Docker Compose**:
    Ensure Docker and Docker Compose are installed on your machine. Then, run:
