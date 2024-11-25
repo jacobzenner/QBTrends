@@ -21,6 +21,8 @@ This project is a web application designed to track and visualize the performanc
 - **backend/**: Contains all backend code (Express routes, database connection).
   - **routes/**: Includes route handlers for fetching quarterback stats.
   - **db.js**: Sets up the PostgreSQL database connection.
+- **scripts/**: Contains scripts to populate the database.
+  - **qbstats.py**: Script to populate the database with quarterback data. Run this after the container is up.
 - **init.sql**: SQL scripts to create tables and functions required for the application.
 
 ## Setup Instructions
@@ -36,7 +38,13 @@ This project is a web application designed to track and visualize the performanc
    ```
    This will start both the backend and frontend services along with the PostgreSQL database.
 
-3. **Access the Application**:
+3. **Populate the Database**:
+   After the containers are up and running, run the `qbstats.py` script to populate the database:
+   ```bash
+   python scripts/qbstats.py
+   ```
+
+4. **Access the Application**:
    Once the services are up, you can access the application at `http://localhost:3000`.
 
 ## API Endpoints
@@ -55,9 +63,4 @@ This project is a web application designed to track and visualize the performanc
 - The backend uses Node.js and Express to serve the data by interacting with PostgreSQL functions.
 - The frontend uses React and Chart.js to present data visualizations such as bar charts and line charts.
 - SQL functions are defined in `init.sql` to provide complex data aggregations, which are then called by the backend to present to the frontend.
-
-## Contact
-For any questions or issues, please feel free to reach out or open an issue in the repository.
-
-Happy coding!
 
