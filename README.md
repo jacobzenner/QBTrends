@@ -1,84 +1,73 @@
-NFL Quarterback Performance Tracker
+# NFL Quarterback Performance Tracker
 
-Overview
-
+## Overview
 This project is a web application designed to track and visualize the performance of NFL quarterbacks throughout the season. The application uses the PERN stack (PostgreSQL, Express, React, Node.js) and is containerized using Docker. It provides visualizations such as trends in average passing yards, average touchdowns, and interceptions over recent weeks, as well as bar charts highlighting top quarterback performances for specific metrics.
 
-Features
+## Features
+- **Average Passing Yards Trend**: Displays the average passing yards over the last 4 weeks.
+- **Highest Passing EPA, Yards, and TDs**: Shows bar charts for quarterbacks with the highest passing EPA, total passing yards, and touchdowns, along with additional stats.
+- **Average Touchdowns and Interceptions Trend**: Visualizes the average passing TDs and INTs over the last 4 weeks using a line chart for better trend analysis.
 
-Average Passing Yards Trend: Displays the average passing yards over the last 4 weeks.
+## Technology Stack
+- **Frontend**: React, Chart.js for visualizations
+- **Backend**: Node.js, Express
+- **Database**: PostgreSQL
+- **Containerization**: Docker, Docker Compose
 
-Highest Passing EPA, Yards, and TDs: Shows bar charts for quarterbacks with the highest passing EPA, total passing yards, and touchdowns, along with additional stats.
+## Project Structure
+- **frontend/**: Contains all frontend code (React components, styles, etc.).
+  - **components/**: Includes the main components such as `TrendsChart.js` to visualize the quarterback performance.
+  - **public/** and **src/** directories as per standard React app structure.
+- **backend/**: Contains all backend code (Express routes, database connection).
+  - **routes/**: Includes route handlers for fetching quarterback stats.
+  - **db.js**: Sets up the PostgreSQL database connection.
+- **init.sql**: SQL scripts to create tables and functions required for the application.
 
-Average Touchdowns and Interceptions Trend: Visualizes the average passing TDs and INTs over the last 4 weeks using a line chart for better trend analysis.
+## Setup Instructions
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/nfl-qb-performance-tracker.git
+   cd nfl-qb-performance-tracker
+   ```
+2. **Run with Docker Compose**:
+   Ensure Docker and Docker Compose are installed on your machine. Then, run:
+   ```bash
+   docker-compose up
+   ```
+   This will start both the backend and frontend services along with the PostgreSQL database.
 
-Technology Stack
+3. **Access the Application**:
+   Once the services are up, you can access the application at `http://localhost:3000`.
 
-Frontend: React, Chart.js for visualizations
+## API Endpoints
+- **/api/qb-stats/average-passing-yards**: Returns the average passing yards for all players over the last 4 weeks.
+- **/api/qb-stats/highest-passing-epa**: Returns the player with the highest average passing EPA.
+- **/api/qb-stats/highest-passing-yards**: Returns the player with the highest total passing yards.
+- **/api/qb-stats/highest-passing-tds**: Returns the player with the highest total passing touchdowns.
+- **/api/qb-stats/average-tds-ints**: Returns the average passing TDs and INTs per week for the last 4 weeks.
 
-Backend: Node.js, Express
+## Requirements
+- **Docker** and **Docker Compose**
+- **Node.js** (if not running with Docker)
+- **PostgreSQL** (if not running with Docker)
 
-Database: PostgreSQL
+## How It Works
+- The backend uses Node.js and Express to serve the data by interacting with PostgreSQL functions.
+- The frontend uses React and Chart.js to present data visualizations such as bar charts and line charts.
+- SQL functions are defined in `init.sql` to provide complex data aggregations, which are then called by the backend to present to the frontend.
 
-Containerization: Docker, Docker Compose
+## Contributing
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch-name`).
+3. Commit your changes (`git commit -am 'Add new feature'`).
+4. Push to the branch (`git push origin feature-branch-name`).
+5. Create a new Pull Request.
 
-Project Structure
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-frontend/: Contains all frontend code (React components, styles, etc.).
+## Contact
+For any questions or issues, please feel free to reach out or open an issue in the repository.
 
-components/: Includes the main components such as TrendsChart.js to visualize the quarterback performance.
+Happy coding!
 
-public/ and src/ directories as per standard React app structure.
-
-backend/: Contains all backend code (Express routes, database connection).
-
-routes/: Includes route handlers for fetching quarterback stats.
-
-db.js: Sets up the PostgreSQL database connection.
-
-init.sql: SQL scripts to create tables and functions required for the application.
-
-Setup Instructions
-
-Clone the repository:
-
-git clone https://github.com/yourusername/nfl-qb-performance-tracker.git
-cd nfl-qb-performance-tracker
-
-Run with Docker Compose:
-Ensure Docker and Docker Compose are installed on your machine. Then, run:
-
-docker-compose up
-
-This will start both the backend and frontend services along with the PostgreSQL database.
-
-Access the Application:
-Once the services are up, you can access the application at http://localhost:3000.
-
-API Endpoints
-
-/api/qb-stats/average-passing-yards: Returns the average passing yards for all players over the last 4 weeks.
-
-/api/qb-stats/highest-passing-epa: Returns the player with the highest average passing EPA.
-
-/api/qb-stats/highest-passing-yards: Returns the player with the highest total passing yards.
-
-/api/qb-stats/highest-passing-tds: Returns the player with the highest total passing touchdowns.
-
-/api/qb-stats/average-tds-ints: Returns the average passing TDs and INTs per week for the last 4 weeks.
-
-Requirements
-
-Docker and Docker Compose
-
-Node.js (if not running with Docker)
-
-PostgreSQL (if not running with Docker)
-
-How It Works
-
-The backend uses Node.js and Express to serve the data by interacting with PostgreSQL functions.
-
-The frontend uses React and Chart.js to present data visualizations such as bar charts and line charts.
-
-SQL functions are defined in init.sql to provide complex data aggregations, which are then called by the backend to present to the frontend.
