@@ -56,16 +56,6 @@ This project is a web application designed to track and visualize the performanc
 - The frontend uses React and Chart.js to present data visualizations such as bar charts and line charts.
 - SQL functions are defined in `init.sql` to provide complex data aggregations, which are then called by the backend to present to the frontend.
 
-## Contributing
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch-name`).
-3. Commit your changes (`git commit -am 'Add new feature'`).
-4. Push to the branch (`git push origin feature-branch-name`).
-5. Create a new Pull Request.
-
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## Contact
 For any questions or issues, please feel free to reach out or open an issue in the repository.
 
